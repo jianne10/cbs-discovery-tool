@@ -24,6 +24,22 @@ export const partitions: Partition[] = [
     portAlt: 9300,
     sitekeys: ["examplecom"],
   },
+  {
+    name: "partition1",
+    apiHost: "172.31.28.170",
+    apiHostAlt: "172.31.90.48",
+    port: 9100,
+    portAlt: 9300,
+    sitekeys: ["example2deployment"],
+  },
+  {
+    name: "partition1",
+    apiHost: "172.31.28.170",
+    apiHostAlt: "172.31.90.48",
+    port: 9100,
+    portAlt: 9300,
+    sitekeys: ["123"],
+  },
   // {
   //   name: "partition2",
   //   apiHost: "172.31.90.48",

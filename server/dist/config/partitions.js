@@ -1,12 +1,23 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.getSitekeyPartition = exports.partitions = void 0;
-exports.partitions = [
+exports.partitions = [{
+        name: "partition1",
+        apiHost: "172.31.28.170",
+        apiHostAlt: "172.31.90.48",
+        port: 9100,
+        portAlt: 9300,
+        sitekeys: ["ctshirtscom"],
+    },
     {
         name: "partition1",
         apiHost: "172.31.28.170",
+        apiHostAlt: "172.31.90.48",
         port: 9100,
-        sitekeys: ["ctshirtscom"],
+        portAlt: 9300,
+        sitekeys: ["examplecom"],
     },
     // {
     //   name: "partition2",

@@ -22,17 +22,20 @@ exports.resolvers = {
             });
             return sitekeys;
         },
-        categories: async (_, { sitekey, locale, minProductCount = 0 }) => {
+        categories: async (_, { sitekey, locale, minProductCount = 5 }) => {
             const partition = (0, partitions_1.getSitekeyPartition)(sitekey);
             if (!partition) {
                 throw new Error(`Sitekey "${sitekey}" not found in any partition`);
             }
             try {
                 const response = await axios_1.default.get(`http://${partition.apiHost}:${partition.port}/api/v1/key/${sitekey}/categories/query?locale=${locale}`);
-                // console.table(response.data.categories)
-                // Filter categories based on minProductCount
-                // console.log(JSON.stringify(response.data, null, 2))
-                return response.data.categories.filter((category) => category.productCount >= minProductCount);
+                console.log(minProductCount);
+                return response.data.categories
+                    .filter((category) => category.productCount >= minProductCount)
+                    .map((category) => ({
+                    ...category,
+                    id: category.name,
+                }));
             }
             catch (error) {
                 console.error("Error fetching categories:", error);
@@ -47,7 +50,12 @@ exports.resolvers = {
             // Encode the category for the URL
             const encodedCategory = encodeURIComponent(category);
             try {
-                const response = await axios_1.default.get(`http://${partition.apiHost}:${partition.port}/api/v1/key/${sitekey}/orders/metrics/category/${encodedCategory}?limit=${limit}&projection=id`);
+                const response = await axios_1.default.get(`http://${partition.apiHostAlt}:${partition.portAlt}/api/v1/key/${sitekey}/orders/metrics/category/${encodedCategory}?limit=${limit}&projection=id`);
+                //http://172.31.90.48:9300/api/v1/key/ctshirtscom/orders/metrics/category/Black%20Tie?limit=100&projection=id
+                //http://172.31.28.170:9300/api/v1/key/ctshirtscom/orders/metrics/category/%2FBlack%20Tie?limit=100&projection=id
+                //http://172.31.28.170:9300/api/v1/key/ctshirtscom/orders/metrics/category/%2FBlack%20Tie?limit=100&projection=id%27
+                console.log("1234");
+                console.log(response);
                 return response.data;
             }
             catch (error) {
@@ -61,7 +69,10 @@ exports.resolvers = {
                 throw new Error(`Sitekey "${sitekey}" not found in any partition`);
             }
             try {
-                const response = await axios_1.default.post(`http://${partition.apiHost}:${partition.port}/api/v1/key/${sitekey}/orders/metrics/search`, { products: productIds }, { headers: { "Content-Type": "application/json" } });
+                console.log(`Fetching details for products: ${JSON.stringify(productIds)}`);
+                const response = await axios_1.default.post(`http://${partition.apiHostAlt}:${partition.portAlt}/api/v1/key/${sitekey}/orders/metrics/search`, { products: productIds }, { headers: { "Content-Type": "application/json" } });
+                console.log("Product details response:", JSON.stringify(response.data, null, 2));
+                // Return the data directly, as it already matches our schema
                 return response.data;
             }
             catch (error) {

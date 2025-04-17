@@ -16,13 +16,33 @@ exports.typeDefs = (0, apollo_server_express_1.gql) `
 
   type Product {
     productId: String!
-    rank: Int
     metrics: ProductMetrics
   }
 
+  type CategoryRank {
+    category: String!
+    level: Int!
+    itemRank: Int!
+    ranksCount: Int!
+  }
+
+  type CategoryRanks {
+    ranks: [CategoryRank!]!
+  }
+
   type ProductMetrics {
+    lastOrdered: String
+    trending: Boolean
+    sellingRank: Int
+    categoryRanks: CategoryRanks
+    brandRank: Int
     revenue: Float
     units: Int
+  }
+  type ProductSearchResponse {
+    metricsProduct: [Product!]!
+    streamResultsProducts: [Product!]!
+    streamResultsTags: [String!]!
   }
 
   type CategoryProducts {
@@ -42,6 +62,9 @@ exports.typeDefs = (0, apollo_server_express_1.gql) `
       category: String!
       limit: Int
     ): CategoryProducts!
-    productDetails(sitekey: String!, productIds: [String!]!): [Product!]!
+    productDetails(
+      sitekey: String!
+      productIds: [String!]!
+    ): ProductSearchResponse!
   }
 `;

@@ -1,0 +1,101 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'yarn'
+        
+    - name: Install dependencies
+      run: yarn install
+      
+    - name: Check types and lint (server)
+      run: |
+        cd server
+        yarn tsc --noEmit
+        
+    - name: Check types and lint (client)
+      run: |
+        cd client
+        yarn tsc --noEmit
+        
+    - name: Build server
+      run: |
+        cd server
+        yarn build
+        
+    - name: Build client
+      run: |
+        cd client
+        yarn build
+        
+    - name: Upload client build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: client-build
+        path: client/build
+        
+    - name: Upload server build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: server-build
+        path: server/dist
+
+  deploy-backend:
+    needs: test-and-build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      
+    - name: Download server build
+      uses: actions/download-artifact@v3
+      with:
+        name: server-build
+        path: server/dist
+        
+    - name: Deploy to Render
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        RENDER_SERVICE_ID: ${{ secrets.RENDER_BACKEND_SERVICE_ID }}
+      run: |
+        curl -X POST "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys" \
+          -H "Authorization: Bearer $RENDER_API_KEY" \
+          -H "Content-Type: application/json"
+
+  deploy-frontend:
+    needs: test-and-build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download client build
+      uses: actions/download-artifact@v3
+      with:
+        name: client-build
+        path: ./build
+        
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './build'
+        production-branch: main
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy from GitHub Actions"
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

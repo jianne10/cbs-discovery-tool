@@ -38,8 +38,8 @@ yarn dev
 ```
 
 The application will be available at:
-- Frontend: http://localhost:3030
-- GraphQL API: http://localhost:4040/graphql
+- Frontend: http://localhost:5000
+- GraphQL API: http://localhost:4000/graphql
 
 ## Project Structure
 
