@@ -1,0 +1,20 @@
+{
+  "name": "cbs-discovery-tool",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "client": "yarn workspace cbs-discovery-client start",
+    "server": "yarn workspace cbs-discovery-server dev",
+    "dev": "concurrently \"yarn server\" \"yarn client\"",
+    "build": "yarn workspace cbs-discovery-client build && yarn workspace cbs-discovery-server build",
+    "start": "yarn workspace cbs-discovery-server start"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
