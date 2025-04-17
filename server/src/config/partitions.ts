@@ -22,7 +22,7 @@ export const partitions: Partition[] = [
     apiHostAlt: "172.31.90.48",
     port: 9100,
     portAlt: 9300,
-    sitekeys: ["theperfumeshopcom"],
+    sitekeys: ["theperfum123eshopcsom"],
   },
   // {
   //   name: "partition2",

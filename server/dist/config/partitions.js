@@ -17,7 +17,7 @@ exports.partitions = [{
         apiHostAlt: "172.31.90.48",
         port: 9100,
         portAlt: 9300,
-        sitekeys: ["examplecom"],
+        sitekeys: ["theperfum123eshopcsom"],
     },
     // {
     //   name: "partition2",
